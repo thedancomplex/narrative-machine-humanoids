@@ -41,8 +41,8 @@ import numpy as np
 
 
 # Hubo-ach stuff
-import hubo_ach as ha
-import ach
+##import hubo_ach as ha
+##import ach
 from ctypes import *
 
 
@@ -148,17 +148,22 @@ def main(settings):
         net.synchronize()
 
 
+        # Get actuators current position
         for actuator in myActuators:
             actuator.read_all()
             time.sleep(0.01)
             if ( actuator.id == 1):
-                encoder.enc[ha.NKY] = dyn2rad(actuator.current_position)
+                enc = dyn2rad(actuator.current_position) # get enc pos of id 1
+                #encoder.enc[ha.NKY] = dyn2rad(actuator.current_position)
             if ( actuator.id == 2):
-                encoder.enc[ha.NK1] = dyn2rad(actuator.current_position)
-            if ( actuator.id == 3):
-                encoder.enc[ha.NK2] = dyn2rad(actuator.current_position)
+                enc = dyn2rad(actuator.current_position) # get enc pos of id 2
+                #encoder.enc[ha.NK1] = dyn2rad(actuator.current_position)
+            if ( actuator.id == 15):
+                enc = dyn2rad(actuator.current_position) # get enc pos of id 15
+                #encoder.enc[ha.NK2] = dyn2rad(actuator.current_position)
+            enc = dyn2rad(actuator.current_position) # get enc pos of id actuator.id
 #	print encoder.enc[ha.NKY], " : ", encoder.enc[ha.NK1], " : ", encoder.enc[ha.NK2]
-        e.put(encoder)
+#        e.put(encoder)
         time.sleep(0.02)
 
 def validateInput(userInput, rangeMin, rangeMax):

@@ -10,6 +10,18 @@ def get():
 
 def init():
 # initilize the dyn package
+# also initializes network settings
 
 def close():
 # stops the dyn packs
+
+def home():
+# sets robot to home position
+
+def vel(mot,vel):
+# set velocity for mot at vel(deg/sec)
+
+def beat():
+# block until next beat
+# return an int as to where in the measure we are
+

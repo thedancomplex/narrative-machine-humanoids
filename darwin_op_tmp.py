@@ -44,6 +44,14 @@ import PyCM730_h as cm
 ##import hubo_ach as ha
 ##import ach
 from ctypes import *
+import socket
+
+UDP_IP = "0.0.0.0"
+UDP_PORT = 8009
+
+sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+sock.bind((UDP_IP, UDP_PORT))
 
 
 def rad2dyn(rad):
@@ -143,21 +151,30 @@ def main(settings):
         actuator.max_torque = 800
 
 # Set servo pos to 0.0
+
+    state = 0
     while True:
-        # Get the current feed-forward (state) 
-#        [statuss, framesizes] = s.get(state, wait=False, last=True)
-        for actuator in myActuators:
-            actuator.goal_position = rad2dyn(0.0) # set all ids in range to 0.0 rad
-            if ( actuator.id == 5):
-                actuator.goal_position = rad2dyn(-3.14/2.0) # set id 5 to -pi/2 rad
-            if ( actuator.id == 6):
-                actuator.goal_position = rad2dyn(3.14/2.0) # set id 6 to  pi/2 rad
-            if ( actuator.id == 3):
-                actuator.goal_position = rad2dyn(3.14/4.0) # set id 3 to pi/4 rad
-            if(actuator.id == 4):
-                actuator.goal_position = rad2dyn(-3.14/4.0) # set id 4 to -pi/4 rad
-        # send to robot
-        net.synchronize()
+	if(state == 0):
+            data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+            print "received message:", data
+            # Get the current feed-forward (state) 
+            #        [statuss, framesizes] = s.get(state, wait=False, last=True)
+            if(str(data) == "H"):
+	        state = 1
+	        print("got it")
+	elif(state == 1):
+            for actuator in myActuators:
+                actuator.goal_position = rad2dyn(0.0) # set all ids in range to 0.0 rad
+                if ( actuator.id == 5):
+                    actuator.goal_position = rad2dyn(-3.14/2.0) # set id 5 to -pi/2 rad
+                if ( actuator.id == 6):
+                    actuator.goal_position = rad2dyn(3.14/2.0) # set id 6 to  pi/2 rad
+                if ( actuator.id == 3):
+                    actuator.goal_position = rad2dyn(3.14/4.0) # set id 3 to pi/4 rad
+                if(actuator.id == 4):
+                    actuator.goal_position = rad2dyn(-3.14/4.0) # set id 4 to -pi/4 rad
+            # send to robot
+            net.synchronize()
 
 
     

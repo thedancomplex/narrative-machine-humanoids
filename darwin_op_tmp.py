@@ -144,7 +144,7 @@ def main(settings):
       print "...Done"
 
     for actuator in myActuators:
-        actuator.moving_speed = 50
+        actuator.moving_speed = 256
         actuator.synchronized = True
         actuator.torque_enable = True
         actuator.torque_limit = 800

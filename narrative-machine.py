@@ -27,6 +27,7 @@ def put():
   toSend = "P"
   sock.sendto(toSend,('<broadcast>',UDP_PORT))
   # put all set values on to the robot
+
 """
 def get():
   # get current angle values of robot
@@ -48,8 +49,66 @@ def vel(mot,vel):
   sock.sendto(toSend,('<broadcast>', UDP_PORT))
   # set velocity for mot at vel(deg/sec)
 
-"""
-def beat():
+def twistArms():
+  vel(0,750)
+  i = 0
+  while(i < 10):
+    set(2,-3.14/2.0)
+    set(1,-3.14/2.0)
+    put()
+    t.sleep(1.0)
+    set(1,3.14/2.0)
+    set(2,3.14/2.0)
+    put()
+    t.sleep(1.0)
+    i+=1
+def flexArms():
+  vel(0,1023)
+  i=0
+  while(i < 10):
+    set(5,0.0)
+    set(6,0.0)
+    put()
+    t.sleep(1.0)
+    set(5,-3.14/2.0)
+    set(6,3.14/2.0)
+    put()
+    t.sleep(1.0)
+    i+=1
+
+def flexInvertArms():
+  vel(0,1023)
+  i=0
+  while(i < 10):
+    set(5,-3.14/2.0)
+    set(6,0.0)
+    put()
+    t.sleep(1.0)
+    set(5,0.0)
+    set(6,3.14/2.0)
+    put()
+    t.sleep(1.0)
+    i+=1
+
+def doubleArms():
+  vel(0,1023)
+  i=0
+  while(i < 10):
+    set(2,-3.14/2.0)
+    set(1,-3.14/2.0)
+    set(5,0.0)
+    set(6,0.0)
+    put()
+    t.sleep(1.0)
+    set(5,-3.14/2.0)
+    set(6,3.14/2.0)
+    set(1,3.14/2.0)
+    set(2,3.14/2.0)
+    put()
+    t.sleep(1.0)
+    i+=1
+
+"""def beat()
 # block until next beat
 # return an int as to where in the measure we are
 """
@@ -58,7 +117,26 @@ home()
 
 put()
 i = 0
-t.sleep(2.0)
+
+t.sleep(3.0)
+#twistArms()
+#flexArms()
+#flexInvertArms()
+
+doubleArms()
+"""
+while(i < 10):
+  set(2,-3.14/2.0)
+  set(1,-3.14/2.0)
+  put()
+  t.sleep(1.0)
+  set(1,3.14/2.0)
+  set(2,3.14/2.0)
+  put()
+  t.sleep(1.0)
+  i+=1
+"""
+"""
 while(i < 3):
   set(4,-3.14/8.0)
   set(3,3.14/4.0)
@@ -70,4 +148,4 @@ while(i < 3):
   t.sleep(2.0)
   i+=1
 home()
-put()
+put()"""

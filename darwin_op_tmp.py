@@ -154,30 +154,43 @@ def main(settings):
 
     state = 0
     while True:
-	if(state == 0):
-            data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-            print "received message:", data
-            # Get the current feed-forward (state) 
-            #        [statuss, framesizes] = s.get(state, wait=False, last=True)
-            if(str(data) == "H"):
-	        state = 1
-	        print("got it")
-	elif(state == 1):
+	
+       data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+       print "received message:", data
+       # Get the current feed-forward (state) 
+       #        [statuss, framesizes] = s.get(state, wait=False, last=True)
+       if(str(data) == "H"):
+	    state = 1
+	    print("got it")
             for actuator in myActuators:
                 actuator.goal_position = rad2dyn(0.0) # set all ids in range to 0.0 rad
-                if ( actuator.id == 5):
+                if (actuator.id == 5):
                     actuator.goal_position = rad2dyn(-3.14/2.0) # set id 5 to -pi/2 rad
-                if ( actuator.id == 6):
+                if (actuator.id == 6):
                     actuator.goal_position = rad2dyn(3.14/2.0) # set id 6 to  pi/2 rad
-                if ( actuator.id == 3):
+                if (actuator.id == 3):
                     actuator.goal_position = rad2dyn(3.14/4.0) # set id 3 to pi/4 rad
                 if(actuator.id == 4):
                     actuator.goal_position = rad2dyn(-3.14/4.0) # set id 4 to -pi/4 rad
-            # send to robot
+       elif(str(data[0]) == "M"):
+            print("good")
+            mot = int(data[1])
+            print("motor: ",mot)
+            if(data[2] == "A"):
+                val = float(data[3:len(data)].decode())
+                print("val: ",val)
+		for actuator in myActuators:
+		    if(actuator.id == mot):
+		        actuator.goal_position = rad2dyn(val)
+            elif(data[2] == "V"):
+                vel = float(data[3:len(data)].decode())
+                print("vel: ",vel)
+       elif((data[0]) == "P"):
+	    # send to robot 
             net.synchronize()
+		
 
 
-    
     
 
 def validateInput(userInput, rangeMin, rangeMax):

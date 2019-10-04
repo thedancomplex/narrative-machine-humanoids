@@ -144,7 +144,7 @@ def main(settings):
       print "...Done"
 
     for actuator in myActuators:
-        actuator.moving_speed = 256
+        actuator.moving_speed = 50
         actuator.synchronized = True
         actuator.torque_enable = True
         actuator.torque_limit = 800
@@ -183,13 +183,13 @@ def main(settings):
 		    if(actuator.id == mot):
 		        actuator.goal_position = rad2dyn(val)
             elif(data[2] == "V"):
-                vel = float(data[3:len(data)].decode())
-                print("vel: ",vel)
+                vel = int(data[3:len(data)].decode())
+                print(vel)
+                for actuator in myActuators:
+                    actuator.moving_speed = vel
        elif((data[0]) == "P"):
 	    # send to robot 
             net.synchronize()
-		
-
 
     
 

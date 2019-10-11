@@ -38,6 +38,6 @@ def doBeat(bpm):
 
 while i < 16:
   print i
-  doBeat(200)
+  doBeat(90)
   i += 1
 

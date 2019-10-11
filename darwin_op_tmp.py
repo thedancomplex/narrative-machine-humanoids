@@ -47,7 +47,7 @@ from ctypes import *
 import socket
 
 UDP_IP = "0.0.0.0"
-UDP_PORT = 8009
+UDP_PORT = 8010
 
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
@@ -144,7 +144,7 @@ def main(settings):
       print "...Done"
 
     for actuator in myActuators:
-        actuator.moving_speed = 256
+        actuator.moving_speed = 50
         actuator.synchronized = True
         actuator.torque_enable = True
         actuator.torque_limit = 800
@@ -176,20 +176,36 @@ def main(settings):
             print("good")
             mot = int(data[1])
             print("motor: ",mot)
+            print(data[2])
             if(data[2] == "A"):
                 val = float(data[3:len(data)].decode())
                 print("val: ",val)
-		for actuator in myActuators:
-		    if(actuator.id == mot):
-		        actuator.goal_position = rad2dyn(val)
+		#for actuator in myActuators:
+		#    if(actuator.id == mot):
+		#        actuator.goal_position = rad2dyn(val)
             elif(data[2] == "V"):
-                vel = float(data[3:len(data)].decode())
-                print("vel: ",vel)
+                vel = int(data[3:len(data)].decode())
+                print(vel)
+                #for actuator in myActuators:
+                #    actuator.moving_speed = vel
+            else:
+                mot = mot*10 + float(data[2])
+                print("motor",mot)
+                if(data[3] == "A"):
+                    val = float(data[4:len(data)].decode())
+                    print("val: ",val)
+                    #for actuator in myActuators:
+                    #    if(actuator.id == mot):
+                    #        actuator.goal_position = rad2dyn(val)
+                elif(data[3] == "V"):
+                    vel = int(data[4:len(data)].decode())
+                    print(vel)
+                    #for actuator in myActuators:
+                    #    actuator.moving_speed = vel
+
        elif((data[0]) == "P"):
 	    # send to robot 
             net.synchronize()
-		
-
 
     
 

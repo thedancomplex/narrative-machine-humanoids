@@ -4,7 +4,7 @@ import socket
 import time as t
 
 UDP_IP = "192.168.8.255"
-UDP_PORT = 8009
+UDP_PORT = 8010
 MESSAGE = "Hello Robot!"
 
 print "UDP target IP:", UDP_IP

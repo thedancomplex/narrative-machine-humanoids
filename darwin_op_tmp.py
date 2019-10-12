@@ -30,7 +30,7 @@
 # */
 
 import os
-import dynamixel
+#import dynamixel
 import time
 import random
 import sys
@@ -38,7 +38,8 @@ import subprocess
 import optparse
 import yaml
 import numpy as np
-import PyCM730_h as cm
+#import PyCM730_h as cm
+import threading
 
 # Hubo-ach stuff
 ##import hubo_ach as ha
@@ -46,12 +47,58 @@ import PyCM730_h as cm
 from ctypes import *
 import socket
 
-UDP_IP = "0.0.0.0"
-UDP_PORT = 8010
+UDP_IP_C = "127.0.0.1"
+UDP_PORT_C = 8010
 
+UDP_IP_B = "0.0.0.0"
+UDP_PORT_B = 8009
+
+sock_C = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+#sock_C.bind((UDP_IP_C, UDP_PORT_C))
+sock_B = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
-sock.bind((UDP_IP, UDP_PORT))
+def home():
+  toSend = "H"
+  # sets robot to home position
+  sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
+home()
+def vel(mot,vel):
+  toSend = "M"+ str(mot) + "V" + str(vel).encode()
+  sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
+  # set velocity for mot at vel(deg/sec)
+
+def set(mot, val):
+  # val is float to represent the joint angle in radians
+  toSend = "M"+str(mot) + "A" + str(val).encode()
+  sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
+  # Set motor and angle value for joint
+  # Ready to be sent (but not sent)
+
+def put():
+  toSend = "P"
+  sock.sendto(toSend,(UDP_IP_C,UDP_PORT_C))
+  # put all set values on to the robot
+"""
+def beat():
+  # block until next beat
+  # return an int as to where in the measure we are
+
+def get():
+  # get current angle values of robot
+
+def init():
+
+  # initilize the dyn package
+  # also initializes network settings
+
+def close():
+  # stops the dyn packs
+
+"""
+
 
 
 def rad2dyn(rad):
@@ -86,6 +133,8 @@ def enable2(serial, net):
 #        actuator.synchronized = True
         actuator.torque_enable = True
     return 0 
+
+#def todoTasks():
 
 
 def main(settings):
@@ -151,11 +200,12 @@ def main(settings):
         actuator.max_torque = 800
 
 # Set servo pos to 0.0
-
+    t = threading.Thread(target=todoTasks)
+    t.start()
     state = 0
     while True:
 	
-       data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+       data, addr = sock_C.recvfrom(1024) # buffer size is 1024 bytes
        print "received message:", data
        # Get the current feed-forward (state) 
        #        [statuss, framesizes] = s.get(state, wait=False, last=True)
@@ -206,8 +256,7 @@ def main(settings):
        elif((data[0]) == "P"):
 	    # send to robot 
             net.synchronize()
-
-    
+       
 
 def validateInput(userInput, rangeMin, rangeMax):
     '''

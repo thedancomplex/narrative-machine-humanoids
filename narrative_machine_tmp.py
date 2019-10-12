@@ -85,15 +85,15 @@ def beat():
 
 
 
-def init(var):
+def init(var=None):
  global myActuators,t,net,sock_C,sock_B,sock,UDP_IP_C,UDP_PORT_C,UDP_IP_B,UDP_PORT_B
  if(var == None):
   UDP_IP_B = "0.0.0.0"
   UDP_PORT_B = 8009
 
-  sock_C = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-  sock_C.bind((UDP_IP_C, UDP_PORT_C))
+  UDP_IP_C = "127.0.0.1"
+  UDP_PORT_C = 8010
+
   sock_B = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
   sock_B.bind((UDP_IP_B,UDP_PORT_B))
@@ -111,6 +111,9 @@ def init(var):
   UDP_IP_C = "127.0.0.1"
   UDP_PORT_C = 8010
 
+  sock_C = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+  sock_C.bind((UDP_IP_C, UDP_PORT_C))
 
   maxBeat = 0
   curBeat = 0

@@ -26,4 +26,4 @@ while(count < 16):
   count += 1
 nm.home()
 nm.put()
-nm.nmexit()
+#nm.nmexit()

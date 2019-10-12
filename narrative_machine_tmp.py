@@ -110,7 +110,8 @@ def init(var=None):
   (options, args) = parser.parse_args()
   UDP_IP_C = "127.0.0.1"
   UDP_PORT_C = 8010
-
+  sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
   sock_C = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
   sock_C.bind((UDP_IP_C, UDP_PORT_C))

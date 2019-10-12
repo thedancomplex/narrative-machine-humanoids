@@ -88,17 +88,6 @@ def beat():
 def init(var):
  global myActuators,t,net,sock_C,sock_B,sock,UDP_IP_C,UDP_PORT_C,UDP_IP_B,UDP_PORT_B
  if(var == None):
-    
-  parser = optparse.OptionParser()
-  parser.add_option("-c", "--clean",
-                      action="store_true", dest="clean", default=False,
-                      help="Ignore the settings.yaml file if it exists and \
-                      prompt for new settings.")
-
-  (options, args) = parser.parse_args()
-  UDP_IP_C = "127.0.0.1"
-  UDP_PORT_C = 8010
-
   UDP_IP_B = "0.0.0.0"
   UDP_PORT_B = 8009
 
@@ -110,6 +99,18 @@ def init(var):
   sock_B.bind((UDP_IP_B,UDP_PORT_B))
   sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
+  return 0
+ elif(var == 'server'):
+  parser = optparse.OptionParser()
+  parser.add_option("-c", "--clean",
+                      action="store_true", dest="clean", default=False,
+                      help="Ignore the settings.yaml file if it exists and \
+                      prompt for new settings.")
+
+  (options, args) = parser.parse_args()
+  UDP_IP_C = "127.0.0.1"
+  UDP_PORT_C = 8010
+
 
   maxBeat = 0
   curBeat = 0
@@ -137,7 +138,8 @@ def init(var):
     myActuators.append(net[dyn.id])
 
   if not myActuators:
-    print 'No Dynamixels Found!'
+    print 'No Dynamixelis Found!' 
+    return 1
     sys.exit(0)
   else:
     print "...Done"
@@ -150,6 +152,9 @@ def init(var):
     actuator.max_torque = 800
   t=threading.Thread(target=main,args=(settings,))
   t.start()
+  return 0
+ else:
+  return 1
 def get():
   return(myActuators)
   # get current angle values of robot

@@ -47,35 +47,20 @@ import threading
 from ctypes import *
 import socket
 
-UDP_IP_C = "127.0.0.1"
-UDP_PORT_C = 8010
-
-UDP_IP_B = "0.0.0.0"
-UDP_PORT_B = 8009
-
-sock_C = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-sock_C.bind((UDP_IP_C, UDP_PORT_C))
-sock_B = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-sock_B.bind((UDP_IP_B,UDP_PORT_B))
-sock = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-
-maxBeat = 0
-curBeat = 0
-
 def home():
+  global sock,UDP_IP_C,UDP_PORT_C
   toSend = "H"
   # sets robot to home position
   sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
 
 def vel(mot,vel):
+  global sock,UDP_IP_C,UDP_PORT_C
   toSend = "M"+ str(mot) + "V" + str(vel).encode()
   sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
   # set velocity for mot at vel(deg/sec)
 
 def set(mot, val):
+  global sock,UDP_PORT_C,UDP_IP_C
   # val is float to represent the joint angle in radians
   toSend = "M"+str(mot) + "A" + str(val).encode()
   sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
@@ -83,11 +68,13 @@ def set(mot, val):
   # Ready to be sent (but not sent)
 
 def put():
+  global sock,UDP_IP_C,UDP_PORT_C
   toSend = "P"
   sock.sendto(toSend,(UDP_IP_C,UDP_PORT_C))
   # put all set values on to the robot
 
 def beat():
+  global sock_B
   data, addr = sock_B.recvfrom(1024)
   curBeat,maxBeat = data.split(" ")
   
@@ -96,8 +83,42 @@ def beat():
   #block until next beat
   #return an int as to where in the measure we are
 
-def init():
-  global myActuators,net
+
+
+def init(var):
+ global myActuators,t,net,sock_C,sock_B,sock,UDP_IP_C,UDP_PORT_C,UDP_IP_B,UDP_PORT_B
+ if(var == None):
+    
+  parser = optparse.OptionParser()
+  parser.add_option("-c", "--clean",
+                      action="store_true", dest="clean", default=False,
+                      help="Ignore the settings.yaml file if it exists and \
+                      prompt for new settings.")
+
+  (options, args) = parser.parse_args()
+  UDP_IP_C = "127.0.0.1"
+  UDP_PORT_C = 8010
+
+  UDP_IP_B = "0.0.0.0"
+  UDP_PORT_B = 8009
+
+  sock_C = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+  sock_C.bind((UDP_IP_C, UDP_PORT_C))
+  sock_B = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+  sock_B.bind((UDP_IP_B,UDP_PORT_B))
+  sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+
+  maxBeat = 0
+  curBeat = 0
+  # Look for a settings.yaml file
+  settingsFile = 'settings.yaml'
+  if not options.clean and os.path.exists(settingsFile):
+      with open(settingsFile, 'r') as fh:
+          settings = yaml.load(fh)
+  
   enable()
 
   portName = settings['port']
@@ -127,7 +148,8 @@ def init():
     actuator.torque_enable = True
     actuator.torque_limit = 800
     actuator.max_torque = 800
-
+  t=threading.Thread(target=main,args=(settings,))
+  t.start()
 def get():
   return(myActuators)
   # get current angle values of robot
@@ -164,6 +186,7 @@ def dyn2rad(en):
     return en / 4096.0 * 2.0 * np.pi - np.pi
 
 def enable():
+    global myActuators
     cm730 = cm.CM730()
     cm730.connect()
     cm730.dxl_on()
@@ -215,7 +238,14 @@ def todoTasks():
     home()
     put()
 
+def nmexit():
+  global t,sock,UDP_IP_C,UDP_PORT_C
+  sock.sendto("E",(UDP_IP_C,UDP_PORT_C))
+  t.join()
+  exit()
+
 def main(settings):
+  global sock_C,myActuators,net
     # Open Hubo-Ach feed-forward and feed-back (reference and state) channels
 #    s = ach.Channel(ha.HUBO_CHAN_STATE_NAME)
 #    e = ach.Channel(ha.HUBO_CHAN_ENC_NAME)
@@ -238,8 +268,8 @@ def main(settings):
 
 
 
-  t = threading.Thread(target=todoTasks)
-  t.start()
+  #t = threading.Thread(target=todoTasks)
+  #t.start()
   state = 0
   try:
     while True:
@@ -293,9 +323,11 @@ def main(settings):
        elif((data[0]) == "P"):
 	    # send to robot 
             net.synchronize()
+       elif((data[0]) == "E"):
+            exit()
   except:
     print("EXIT")
-    t.join()
+    exit()
 def validateInput(userInput, rangeMin, rangeMax):
     '''
     Returns valid user input or None

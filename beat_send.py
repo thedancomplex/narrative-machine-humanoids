@@ -22,22 +22,25 @@ sock.bind(("",UDP_PORT))
 
 BEAT_CURRENT = 1
 BEAT_MAX = 4
-
+BEAT_SUB = 1
+MESSAGE = " "
 
 def doBeat(bpm):
-  global BEAT_CURRENT, BEAT_MAX
-  T = 1/(bpm/60.0)
-  MESSAGE = str(BEAT_CURRENT) + " " + str(BEAT_MAX)
+  global BEAT_CURRENT, BEAT_SUB, BEAT_MAX, MESSAGE
+  T = 1/(bpm/60.0)/4.0
+  MESSAGE = str(BEAT_CURRENT) + " " + str(BEAT_SUB) + " " + str(BEAT_MAX)
   sock.sendto(MESSAGE, ('<broadcast>', UDP_PORT))
   #sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-  BEAT_CURRENT += 1
-  if(BEAT_CURRENT > BEAT_MAX):
-    BEAT_CURRENT = 1
+  BEAT_SUB +=1
+  if(BEAT_SUB > 4):
+    BEAT_SUB = 1
+    BEAT_CURRENT += 1
+    if(BEAT_CURRENT > BEAT_MAX):
+      BEAT_CURRENT = 1
   t.sleep(T)
 
-
-while i < 16:
-  print i
-  doBeat(90)
-  i += 1
+i = 0
+while True:
+  doBeat(120)
+  print MESSAGE
 

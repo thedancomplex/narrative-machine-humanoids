@@ -16,7 +16,6 @@ nm.put()
 i=0
 while(i < 200):
   cur,sub,maxBeat = nm.beat()
-  print(cur)
   if((cur == 1 or cur == 3) and (sub == 1 or sub == 3)):
     nm.set(1,-3.14/6.0)
     nm.set(2,3.14/4.0)
@@ -25,7 +24,6 @@ while(i < 200):
     nm.set(2,3.14/6.0)
   nm.put()
   i += 1
-  print("loop")
 
 nm.home()
 nm.put()

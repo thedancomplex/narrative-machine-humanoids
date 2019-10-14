@@ -10,7 +10,7 @@ nm.put()
 
 count = 0
 while(count < 16):
-  cur = nm.beat()
+  cur,sub,maxBeat = nm.beat()
   if(cur == 1):
     nm.set(5,-3.14/4.0)
   elif(cur == 2):

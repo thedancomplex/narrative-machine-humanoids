@@ -75,11 +75,15 @@ def put():
 
 def beat():
   global sock_B
+  sock_B.close()
+  sock_B = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+  sock_B.bind((UDP_IP_B,UDP_PORT_B))
   data, addr = sock_B.recvfrom(1024)
-  curBeat,maxBeat = data.split(" ")
+  curBeat,subBeat,maxBeat = data.split(" ")
   
 
-  return(int(curBeat))
+  return(int(curBeat),int(subBeat),int(maxBeat))
   #block until next beat
   #return an int as to where in the measure we are
 

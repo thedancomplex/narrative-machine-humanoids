@@ -316,8 +316,13 @@ def main(settings):
             elif(data[2] == "V"):
                 vel = int(data[3:len(data)].decode())
                 print(vel)
-                for actuator in myActuators:
-                    actuator.moving_speed = vel
+                if(mot == 0):
+                   for actuator in myActuators:
+                       actuator.moving_speed = vel
+                else:
+                   for actuator in myActuators:
+                       if(actuator.id == mot):
+                           actuator.moving_speed = vel
             else:
                 mot = mot*10 + float(data[2])
                 print("motor",mot)
@@ -330,8 +335,14 @@ def main(settings):
                 elif(data[3] == "V"):
                     vel = int(data[4:len(data)].decode())
                     print(vel)
-                    for actuator in myActuators:
-                        actuator.moving_speed = vel
+                    if(mot == 0):
+                        for actuator in myActuators:
+                            actuator.moving_speed = vel
+                    else:
+                        for actuator in myActuators:
+                            if(actuator.id == mot):
+                                actuator.moving_speed = vel
+
 
        elif((data[0]) == "P"):
 	    # send to robot 

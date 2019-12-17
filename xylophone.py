@@ -18,21 +18,29 @@ LSR = 4
 nm.init()
 
 nm.vel(0,100)
+nm.set(5,0.0)
+#zero()
+nm.put()
 #nm.home()
 #nm.put()
-time.sleep(1.0)
-#nm.set(6,-3.14/9.0)
-#nm.set(5,3.14/9.0)
-nm.set(11,-.2)
-nm.set(12,.2)
-nm.put()
-time.sleep(0.5)
+#time.sleep(1.0)
+#nm.set(LEP,-3.14/8.0 + 0.35) # + out
+#nm.set(REP,3.14/9.0)
+#nm.set(11,-.2)
+#nm.set(12,.2)
+#nm.put()
+time.sleep(3)
 #nm.set(1,-3.14/6.0)
 #nm.set(2,3.14/6.0)
 #nm.put()
 i=0
 
 ts = 0.1
+
+def zero():
+  for i in range (nm.NUM_JOINTS):
+    nm.set(i,0.0)
+
 
 def home():
   #nm.set(RSP,-3.14/6.0)
@@ -90,10 +98,10 @@ def playC5():
 
 def playF3():
   global joint
-  joint[LSP] = 3.14/6.0-0.03 - 0.02
+  joint[LSP] = 3.14/6.0 #- 0.2
   nm.set(LSP,joint[LSP])
-  nm.set(LEP,3.14/9.0)
-  #nm.set(LSR,-3.14/4)
+  nm.set(LEP,-3.14/8.0 + 0.35)
+  #nm.set(LSR,-3.14/4.0 - 0.7)
   print "F3"
 
 def doBeat(hand):
@@ -123,10 +131,12 @@ def doBeat(hand):
 rospy.init_node('listener', anonymous=True)
 rospy.Subscriber("play_note", String, callback)
 print "ready"
-home()
+#home()
+#nm.put()
 #playC5()
 #playF3()
-nm.put()
+#zero()
+#nm.put()
 time.sleep(3.0)
 #doBeat("L")
 #doBeat("R")
@@ -134,5 +144,5 @@ time.sleep(3.0)
 rospy.spin()
 #  cur,sub,maxBeat = nm.beat()
 
-nm.home()
+#nm.home()
 nm.put()

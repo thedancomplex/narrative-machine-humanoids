@@ -173,23 +173,62 @@ def close():
 
 """
 
-def doubleArms():
-  vel(0,1023)
-  i=0
-  while(i < 3):
-    set(2,-3.14/2.0)
-    set(1,-3.14/2.0)
-    set(5,0.0)
-    set(6,0.0)
-    put()
-    time.sleep(1.0)
-    set(5,-3.14/2.0)
-    set(6,3.14/2.0)
-    set(1,3.14/2.0)
-    set(2,3.14/2.0)
-    put()
-    time.sleep(1.0)
-    i+=1
+
+RSP = 1
+LSP = 2
+REP = 5
+LEP = 6
+RSR = 3
+LSR = 4
+LHP = 12
+RHP = 11
+LKP = 14
+RKP = 10
+LHR = 9
+LHY = 7
+RHY = 8
+LAR = 18
+RAR = 17
+LAP = 16
+RAP = 15
+NKP = 20
+NKY = 19
+
+# 0 = current value
+# 1 = offests
+# 2 = dir
+ref = 0
+offset = 1
+direction = 2
+dyn_val = 3
+NUM_JOINTS = 22
+state = np.zeros((NUM_JOINTS,4))
+
+def doInitVals():
+  global state
+  print REP
+  print int(REP)
+  print offset
+  print state 
+  state[int(REP),offset] = -3.14/2.0
+  state[REP,offset] = -3.14/2.0
+  state[LEP,offset] =  3.14/2.0
+  state[RSR,offset] =  3.14/4.0
+  state[LSR,offset] =  -3.14/4.0
+
+  for i in range(NUM_JOINTS):
+    state[i,direction] = 1.0
+  
+def setVals():
+  global state
+  for i in range(NUM_JOINTS):
+    rad_tmp = state[i,ref]*state[i,direction] + state[i,offset]
+    state[i,dyn_val] = rad2dyn(rad_tmp)
+
+def setRef(i, val):
+  global state
+  state[i,ref] = val
+  setVals()
 
 
 def rad2dyn(rad):
@@ -258,7 +297,7 @@ def nmexit():
   exit()
 
 def main(settings):
-  global sock_C,myActuators,net
+  global sock_C,myActuators,net,state
     # Open Hubo-Ach feed-forward and feed-back (reference and state) channels
 #    s = ach.Channel(ha.HUBO_CHAN_STATE_NAME)
 #    e = ach.Channel(ha.HUBO_CHAN_ENC_NAME)
@@ -283,42 +322,45 @@ def main(settings):
 
   #t = threading.Thread(target=todoTasks)
   #t.start()
-  state = 0
+  loop_state = 0
+
+
+  # Set State matrix
+  doInitVals()
+  setVals()
   try:
     while True:
 	
        data, addr = sock_C.recvfrom(1024) # buffer size is 1024 bytes
-       print "received message:", data
+       print "received message - dan:", data
        if(str(data) == "H"):
-	    state = 1
-	    print("got it")
+	    loop_state = 1
+	    print("H - got it")
+            for i in range(NUM_JOINTS):
+                setRef(i,0.0)
             for actuator in myActuators:
-                actuator.goal_position = rad2dyn(0.0) # set all ids in range to 0.0 rad
-                if (actuator.id == 5):
-                    actuator.goal_position = rad2dyn(-3.14/2.0) # set id 5 to -pi/2 rad
-                if (actuator.id == 6):
-                    actuator.goal_position = rad2dyn(3.14/2.0) # set id 6 to  pi/2 rad
-                if (actuator.id == 3):
-                    actuator.goal_position = rad2dyn(3.14/4.0) # set id 3 to pi/4 rad
-                if(actuator.id == 4):
-                    actuator.goal_position = rad2dyn(-3.14/4.0) # set id 4 to -pi/4 rad
+                actuator.goal_position = state[actuator.id,dyn_val] 
        elif(str(data[0]) == "M"):
-            print("good")
+            print("M - good")
             mot = int(data[1])
             print("motor: ",mot)
             print(data[2])
             if(data[2] == "A"):
+                print("MA - good")
                 val = float(data[3:len(data)].decode())
                 print("val: ",val)
 		for actuator in myActuators:
 		    if(actuator.id == mot):
-		        actuator.goal_position = rad2dyn(val)
+                        setRef(actuator.id,val)
+		        actuator.goal_position = state[actuator.id,dyn_val]
             elif(data[2] == "V"):
+                print("V - good")
                 vel = int(data[3:len(data)].decode())
                 print(vel)
                 for actuator in myActuators:
                     actuator.moving_speed = vel
             else:
+                print("Else - good")
                 mot = mot*10 + float(data[2])
                 print("motor",mot)
                 if(data[3] == "A"):
@@ -326,7 +368,8 @@ def main(settings):
                     print("val: ",val)
                     for actuator in myActuators:
                         if(actuator.id == mot):
-                            actuator.goal_position = rad2dyn(val)
+                          setRef(actuator.id,val)
+		          actuator.goal_position = state[actuator.id,dyn_val]
                 elif(data[3] == "V"):
                     vel = int(data[4:len(data)].decode())
                     print(vel)
@@ -334,12 +377,14 @@ def main(settings):
                         actuator.moving_speed = vel
 
        elif((data[0]) == "P"):
-	    # send to robot 
+	    # send to robot
+            print "dan - pre send" 
             net.synchronize()
+            print "dan - post send"
        elif((data[0]) == "E"):
             exit()
   except:
-    print("EXIT")
+    print("Exit on error EXIT")
     exit()
 def validateInput(userInput, rangeMin, rangeMax):
     '''

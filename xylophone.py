@@ -2,6 +2,7 @@ import narrative_machine_tmp as nm
 import time
 import random as r
 import rospy
+import numpy as np
 from std_msgs.msg import String
 #pub = rospy.Publisher('play_note', String, queue_size=10)
 #rospy.init_node('talker', anonymous=True)
@@ -14,13 +15,18 @@ LEP = 6
 RSR = 3
 LSR = 4
 
-
 nm.init()
 
 nm.vel(0,100)
-nm.set(5,0.0)
-#zero()
-nm.put()
+
+def deg2rad(dvel):
+  return dvel*np.pi/180.0
+
+
+def test():
+  for i in range (nm.NUM_JOINTS):
+    nm.set(i,0.1)
+
 #nm.home()
 #nm.put()
 #time.sleep(1.0)
@@ -29,7 +35,7 @@ nm.put()
 #nm.set(11,-.2)
 #nm.set(12,.2)
 #nm.put()
-time.sleep(3)
+#time.sleep(3)
 #nm.set(1,-3.14/6.0)
 #nm.set(2,3.14/6.0)
 #nm.put()
@@ -44,9 +50,9 @@ def zero():
 
 def home():
   #nm.set(RSP,-3.14/6.0)
-  nm.set(LSP,3.14/6.0)
+  #nm.set(LSP,3.14/6.0)
   #nm.set(REP,3.14/9.0)
-  nm.set(LEP,-3.14/8.0)
+  #nm.set(LEP,-3.14/8.0)
   nm.put()
 
 def playB():
@@ -104,6 +110,14 @@ def playF3():
   #nm.set(LSR,-3.14/4.0 - 0.7)
   print "F3"
 
+def playPose():
+  nm.set(nm.LSR,deg2rad(-45.0))
+  nm.set(nm.RSR,deg2rad(45.0))
+  nm.set(nm.REP,deg2rad(-45.0))
+  nm.set(nm.LEP, deg2rad(-45.0))
+  nm.set(nm.RSP, deg2rad(-45.0))
+  nm.set(nm.LSP, deg2rad(-45.0))
+
 def doBeat(hand):
   if(hand == "L"):
     da = 0.1
@@ -119,13 +133,11 @@ def doBeat(hand):
     da = -0.1
     nm.set(RSP, joint[RSP] + da)
     nm.put()
-  #time.sleep(0.05)
   time.sleep(1.0)
   nm.set(LSP, joint[LSP])
   nm.set(RSP, joint[RSP])
   nm.put()
-  #time.sleep(0.05)
-  time.sleep(1.0)
+  time.sleep(1)
 #home()
 #while(True):
 rospy.init_node('listener', anonymous=True)
@@ -135,9 +147,12 @@ print "ready"
 #nm.put()
 #playC5()
 #playF3()
+playPose()
+
+
 #zero()
 #nm.put()
-time.sleep(3.0)
+#time.sleep(3.0)
 #doBeat("L")
 #doBeat("R")
 #doBeat("B")

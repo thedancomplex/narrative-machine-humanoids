@@ -174,25 +174,28 @@ def close():
 """
 
 
+
 RSP = 1
 LSP = 2
 REP = 5
 LEP = 6
 RSR = 3
 LSR = 4
-LHP = 12
+RHY = 7
+LHY = 8
+RHR = 9
+LHR = 10
 RHP = 11
+LHP = 12
+RKP = 13
 LKP = 14
-RKP = 10
-LHR = 9
-LHY = 7
-RHY = 8
-LAR = 18
-RAR = 17
-LAP = 16
 RAP = 15
-NKP = 20
+LAP = 16
+RAR = 17
+LAR = 18
 NKY = 19
+NKP = 20
+
 
 # 0 = current value
 # 1 = offests
@@ -216,8 +219,29 @@ def doInitVals():
   state[RSR,offset] =  3.14/4.0
   state[LSR,offset] =  -3.14/4.0
 
+
   for i in range(NUM_JOINTS):
     state[i,direction] = 1.0
+  state[LSR,direction] = -1.0
+  state[RSR,direction] = -1.0
+  state[LEP,direction] = 1.0
+  state[REP,direction] = -1.0
+  state[LSP,direction] = 1.0
+  state[RSP,direction] = -1.0
+  state[LHY,direction] = -1.0
+  state[RHY,direction] = -1.0
+  state[RHR,direction] = -1.0
+  state[LHR,direction] = -1.0
+  state[RHP,direction] = 1.0
+  state[RHP,direction] = -1.0
+  state[RKP,direction] = 1.0
+  state[LKP,direction] = -1.0
+  state[RAP,direction] = -1.0
+  state[LAP,direction] = 1.0
+  state[RAR,direction] = 1.0
+  state[LAR,direction] = 1.0
+  state[NKY,direction] = 1.0
+  state[NKP,direction] = -1.0
   
 def setVals():
   global state
@@ -339,7 +363,8 @@ def main(settings):
             for i in range(NUM_JOINTS):
                 setRef(i,0.0)
             for actuator in myActuators:
-                actuator.goal_position = state[actuator.id,dyn_val] 
+                actuator.goal_position = rad2dyn(0.0) # set all ids in range to 0.0 rad
+                actuator.goal_position = int(state[actuator.id,dyn_val]) 
        elif(str(data[0]) == "M"):
             print("M - good")
             mot = int(data[1])
@@ -351,8 +376,8 @@ def main(settings):
                 print("val: ",val)
 		for actuator in myActuators:
 		    if(actuator.id == mot):
-                        setRef(actuator.id,val)
-		        actuator.goal_position = state[actuator.id,dyn_val]
+                        setRef(int(actuator.id),val)
+		        actuator.goal_position = int(state[actuator.id,dyn_val])
             elif(data[2] == "V"):
                 print("V - good")
                 vel = int(data[3:len(data)].decode())
@@ -369,7 +394,7 @@ def main(settings):
                     for actuator in myActuators:
                         if(actuator.id == mot):
                           setRef(actuator.id,val)
-		          actuator.goal_position = state[actuator.id,dyn_val]
+                          actuator.goal_position = int(state[actuator.id,dyn_val])
                 elif(data[3] == "V"):
                     vel = int(data[4:len(data)].decode())
                     print(vel)
@@ -378,9 +403,7 @@ def main(settings):
 
        elif((data[0]) == "P"):
 	    # send to robot
-            print "dan - pre send" 
             net.synchronize()
-            print "dan - post send"
        elif((data[0]) == "E"):
             exit()
   except:

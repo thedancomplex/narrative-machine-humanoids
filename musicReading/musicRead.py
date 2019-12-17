@@ -6,9 +6,9 @@ from mido import MidiFile, second2tick, tick2second
 
 from time import sleep
 
-midi_ticks_per_beat = -1
-midi_tempo = 500000 #default tempo
-true_tempo = 250000 # microseconds per beat
+MIDI_TICKS_PER_BEAT = -1
+MIDI_TEMPO = 500000 #default tempo
+TRUE_TEMPO = 250000 # microseconds per beat
 
 NOTES = []
 
@@ -30,40 +30,42 @@ append_num(0)
 for i in range(0,8):
     append_num(i)
 
-def parse_note(msg, pub):
-
+def parse_note(msg, pub, sleep_acc):
+    print(msg)
     print("note value: {}".format(NOTES[msg['note']]))
     pub.publish(NOTES[msg['note']])
 
-    sleep_time = msg['time']*true_tempo/midi_tempo
+    # sleep time is in seconds, but we might have a different tempo
+    sleep_time = sleep_acc*TRUE_TEMPO/MIDI_TEMPO
     
     print("sleeping for: {}".format(sleep_time))
     sleep(sleep_time)
 
-def parse_tempo(msg, _output):
+def parse_tempo(msg):
     print("setting tempo to: {}".format(msg['tempo']))
 
-    midi_tempo = msg['tempo']
-
-
-KNOWN_TYPES = {'note_on':parse_note, 'set_temp':parse_tempo}
+    MIDI_TEMPO = msg['tempo']
     
 
 def sendSong():
     f = MidiFile('hot_cross_buns.mid')
-    midi_ticks_per_beat = f.ticks_per_beat
+    MIDI_TICKS_PER_BEAT = f.ticks_per_beat
     pub = rospy.Publisher('musicSender', String, queue_size=10)
     rospy.init_node('robots', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+
+    sleep_acc = 0
     for msg in f:
         dict_msg = msg.dict()
+        print(dict_msg)
         if 'type' not in dict_msg:
             continue
 
-        if not dict_msg['type'] in KNOWN_TYPES:
-            continue
-
-        KNOWN_TYPES[dict_msg['type']](dict_msg, pub)
+        sleep_acc += dict_msg['time']
+        if dict_msg['type'] == 'note_on':
+            parse_note(dict_msg, pub, sleep_acc)
+            sleep_acc = 0
+        elif dict_msg['type'] == 'parse_tempo':
+            parse_temp(dict_msg)
 
 
 if __name__ == '__main__':

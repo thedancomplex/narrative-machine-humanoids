@@ -29,7 +29,7 @@ import rospy
 from std_msgs.msg import String
 
 # print(dir(mido.messages))
-# print mido.get_input_names()
+#print mido.get_input_names()
 
 def msg_str(msg):
     if msg.type == 'note_on':
@@ -44,8 +44,8 @@ def talker():
     with mido.open_input(PORT) as inport:
         #print inport
         for msg in inport:
-            if rospy.is_shutdown(): # TODO: might hang till a note is pressed
-                break
+            #if rospy.is_shutdown(): # TODO: might hang till a note is pressed
+                #break
             s = msg_str(msg)
             if s is not None:
                 print s

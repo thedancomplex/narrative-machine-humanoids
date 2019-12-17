@@ -1,4 +1,5 @@
 import rospy
+import sys
 from std_msgs.msg import String
 
 import mido
@@ -69,6 +70,9 @@ def sendSong():
 
 
 if __name__ == '__main__':
+    pbm = sys.argv[1]
+    TRUE_TEMPO = float(pbm)/60*1000000
+    print(TRUE_TEMPO)
     try:
         sendSong()
     except rospy.ROSInterruptException:

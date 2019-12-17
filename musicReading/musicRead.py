@@ -48,8 +48,8 @@ def parse_tempo(msg):
     MIDI_TEMPO = msg['tempo']
     
 
-def sendSong():
-    f = MidiFile('hot_cross_buns.mid')
+def sendSong(song):
+    f = MidiFile(song)
     MIDI_TICKS_PER_BEAT = f.ticks_per_beat
     pub = rospy.Publisher('musicSender', String, queue_size=10)
     rospy.init_node('robots', anonymous=True)
@@ -70,11 +70,11 @@ def sendSong():
 
 
 if __name__ == '__main__':
-    pbm = sys.argv[1]
+    f = sys.argv[1]
+    pbm = sys.argv[2]
     TRUE_TEMPO = float(pbm)/60*1000000
-    print(TRUE_TEMPO)
     try:
-        sendSong()
+        sendSong(f)
     except rospy.ROSInterruptException:
         pass
 		   

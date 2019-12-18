@@ -1,0 +1,33 @@
+include "darwin-op.robray"
+
+
+def x_dist 0.24;
+def y_dist 0.03;
+def z_dist 0.03;
+
+frame left_mallot{
+      parent j_gripper_l;
+      type fixed;
+      translation [x_dist/2, 0, 0];
+      geometry {
+      	      shape box;
+	      dimension [x_dist, y_dist, z_dist];
+	      visual 1;
+	      color [0, 1, 1];
+	      alpha 1;
+     }
+}
+
+frame right_mallot{
+      parent j_gripper_r;
+      type fixed;
+      translation [x_dist/2, 0, 0];
+      geometry {
+      	      shape box;
+	      dimension [x_dist, y_dist, z_dist];
+	      visual 1;
+	      color [0, 1, 1];
+	      alpha 1;
+     }
+}
+

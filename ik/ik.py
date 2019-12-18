@@ -7,7 +7,7 @@
 #
 # Slide the end-effector forward and backward in the X-direction
 
-#from amino import SceneWin, SceneGraph, SceneIK, QuatTrans, YAngle
+from amino import SceneWin, SceneGraph, SceneIK, QuatTrans, YAngle, libamino
 from math import pi
 from time import sleep
 import os
@@ -50,10 +50,14 @@ ik.restart_time = 100e-3
 # Set the reference transform
 ik.ref_tf = (-0.199078, 0.678504, 0.199079, -0.678504), (-0.000000, -0.302836, 0.094977)
 
+# Set the objective function
+ik.set_obj(libamino.aa_rx_ik_opt_err_posv)
+
 dt = .1
 period = 3
 while win.is_runnining():
     # Solve IK
+    print("solving ik\n")
     q_sub = ik.solve()
 
     # Display in Window

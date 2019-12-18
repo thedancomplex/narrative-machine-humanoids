@@ -7,21 +7,12 @@ from std_msgs.msg import String
 #pub = rospy.Publisher('play_note', String, queue_size=10)
 #rospy.init_node('talker', anonymous=True)
 
-joint = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-RSP = 1
-LSP = 2
-REP = 5
-LEP = 6
-RSR = 3
-LSR = 4
-
 nm.init()
 
 nm.vel(0,100)
 
 def deg2rad(dvel):
   return dvel*np.pi/180.0
-
 
 def test():
   for i in range (nm.NUM_JOINTS):
@@ -46,7 +37,11 @@ ts = 0.1
 def zero():
   for i in range (nm.NUM_JOINTS):
     nm.set(i,0.0)
+  nm.put()
 
+def positionAdjustment():
+ playF3()
+ playC4()
 
 def home():
   #nm.set(RSP,-3.14/6.0)
@@ -55,31 +50,17 @@ def home():
   #nm.set(LEP,-3.14/8.0)
   nm.put()
 
-def playB():
-  nm.set(5,3.14/9.0)
-  nm.set(1,-3.14/3.9)
-
-def playF():
-  nm.set(6,-3.14/9.0)
-  nm.set(2,3.14/4.1)
-
-def playA():
-  nm.set(5,3.14/7.0)
-  nm.set(1,-3.14/3.8)
-
-def playG():
-  nm.set(6,-3.14/7.0)
-  nm.set(2,3.14/4.0)
-
-def playBF():
-  nm.set(5,3.14/9.0)
-  nm.set(6,-3.14/9.0)
-  nm.set(1,-3.14/3.9)
-  nm.set(2,3.14/4.1)
-
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-    if(data.data == "C4"):
+    if(data.data == "F3"):
+      playF3()
+    elif(data.data == "G3"):
+      playG3()
+    elif(data.data == "A4"):
+      playA4()
+    elif(data.data == "B4"):
+      playB4()
+    elif(data.data == "C4"):
       playC4()
     elif(data.data == "D4"):
       playD4()
@@ -93,30 +74,84 @@ def callback(data):
       playA5()
     elif(data.data == "B5"):
       playB5()
+    elif(data.data == "C5"):
+      playC5()
+    elif(data.data == "D5"):
+      playD5()
+    elif(data.data == "E5"):
+      playE5()
+    elif(data.data == "F5"):
+      playF5()
+    elif(data.data == "G5"):
+      playG5()
+    elif(data.data == "A6"):
+      playA6()
+    elif(data.data == "B6"):
+      playB6()
+    elif(data.data == "C6"):
+      playC6()
     nm.put()
 
-def playC5():
-  global joint
-  joint[RSP] = -3.14/6.0 + 0.3
-  nm.set(RSP,joint[RSP])
-  nm.set(REP,-3.14/9.0)
-  print "C2"
-
 def playF3():
-  global joint
-  joint[LSP] = 3.14/6.0 #- 0.2
-  nm.set(LSP,joint[LSP])
-  nm.set(LEP,-3.14/8.0 + 0.35)
-  #nm.set(LSR,-3.14/4.0 - 0.7)
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
   print "F3"
 
+def playF3():
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
+  nm.put()
+  print "F3"
+
+def playF3():
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
+  nm.put()
+  print "F3"
+
+def playF3():
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
+  nm.put()
+  print "F3"
+
+def playF3():
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
+  nm.put()
+  print "F3"
+
+def playF3():
+  nm.set(nm.LSP, deg2rad(47.0))
+  nm.set(nm.LEP, deg2rad(-65.0))
+  nm.set(nm.LSR, deg2rad(32.0))
+  nm.put()
+  print "F3"
+
+def playC6():
+  nm.set(nm.RSP, deg2rad(47.0))
+  nm.set(nm.REP, deg2rad(-67.0))
+  nm.set(nm.RSR, deg2rad(-32.0))
+  print "C6"
+
+
 def playPose():
-  nm.set(nm.LSR,deg2rad(-45.0))
-  nm.set(nm.RSR,deg2rad(45.0))
-  nm.set(nm.REP,deg2rad(-45.0))
+  nm.set(nm.LSR, deg2rad(-45.0))
+  nm.set(nm.RSR, deg2rad(45.0))
+  nm.set(nm.REP, deg2rad(-45.0))
   nm.set(nm.LEP, deg2rad(-45.0))
   nm.set(nm.RSP, deg2rad(-45.0))
   nm.set(nm.LSP, deg2rad(-45.0))
+  nm.put()
+
+def positionAdjustment():
+  playF3()
+  playC6()
 
 def doBeat(hand):
   if(hand == "L"):
@@ -139,16 +174,21 @@ def doBeat(hand):
   nm.put()
   time.sleep(1)
 #home()
+
 #while(True):
 rospy.init_node('listener', anonymous=True)
-rospy.Subscriber("play_note", String, callback)
+#rospy.Subscriber("play_note", String, callback)
 print "ready"
 #home()
 #nm.put()
 #playC5()
-#playF3()
-playPose()
+playF3()
+nm.put()
 
+
+
+#positionAdjustment()
+#playPose()
 
 #zero()
 #nm.put()
@@ -159,5 +199,8 @@ playPose()
 rospy.spin()
 #  cur,sub,maxBeat = nm.beat()
 
-#nm.home()
+zero()
 nm.put()
+
+#nm.home()
+#nm.put()

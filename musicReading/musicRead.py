@@ -31,7 +31,6 @@ for i in range(0,8):
     append_num(i)
 
 def parse_note(msg, pub):
-    print(msg)
     print("note value: {}".format(NOTES[msg['note']]))
     pub.publish(NOTES[msg['note']])
 
@@ -42,29 +41,42 @@ def parse_tempo(msg):
 
     MIDI_TEMPO = msg['tempo']
 
+def process_message(msg, pub):
+    dict_msg = msg.dict()
+    print(dict_msg)
+    if 'type' not in dict_msg:
+        return 0
 
-def sendSong(song, tempo):
+    if dict_msg['type'] == 'note_on':
+        parse_note(dict_msg, pub)
+    elif dict_msg['type'] == 'parse_tempo':
+        parse_temp(dict_msg)
+    return 1
+
+
+def sendSongTempo(song, tempo):
     f = MidiFile(song)
     MIDI_TICKS_PER_BEAT = f.ticks_per_beat
     pub = rospy.Publisher('play_note', String, queue_size=10)
     rospy.init_node('robots', anonymous=True)
 
-    for msg in f:
+    for msg in f.play():
         dict_msg = msg.dict()
-        print(dict_msg)
-        if 'type' not in dict_msg:
-            continue
+        if (process_message(msg, pub)):
+            # sleep time is in seconds, but we might have a different tempo
+            sleep_time = dict_msg['time']*tempo/MIDI_TEMPO
 
-        if dict_msg['type'] == 'note_on':
-            parse_note(dict_msg, pub)
-        elif dict_msg['type'] == 'parse_tempo':
-            parse_temp(dict_msg)
+            print("sleeping for: {}".format(sleep_time))
+            sleep(sleep_time)
 
-        # sleep time is in seconds, but we might have a different tempo
-        sleep_time = dict_msg['time']*tempo/MIDI_TEMPO
+def sendSong(song):
+    f = MidiFile(song)
+    pub = rospy.Publisher('play_note', String, queue_size=10)
+    rospy.init_node('robots', anonymous=True)
 
-        print("sleeping for: {}".format(sleep_time))
-        sleep(sleep_time)
+    for msg in f.play():
+        process_message(msg, pub)
+
 
 
 if __name__ == '__main__':
@@ -72,6 +84,9 @@ if __name__ == '__main__':
     pbm = sys.argv[2]
     tempo = bpm2tempo(float(pbm))
     try:
-        sendSong(f, tempo)
+        if (len(sys.argv) > 3):
+            sendSong(f)
+        else:
+            sendSongTempo(f, tempo)
     except rospy.ROSInterruptException:
         pass

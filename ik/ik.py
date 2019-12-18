@@ -51,7 +51,11 @@ ik.restart_time = 100e-3
 ik.ref_tf = (-0.199078, 0.678504, 0.199079, -0.678504), (-0.000000, -0.302836, 0.094977)
 
 # Set the objective function
-ik.set_obj(libamino.aa_rx_ik_opt_err_posv)
+ik.set_obj(libamino.aa_rx_ik_opt_err_trans)
+
+# Set the angle tolerance to be some big number
+
+ik.set_tol_angle(100000)
 
 dt = .1
 period = 3
@@ -62,7 +66,7 @@ while win.is_runnining():
 
     # Display in Window
     if q_sub:  # check for valid solution
-        print(q_sub)
+        print(list(q_sub))
         win.config = ssg.scatter_config(q_sub)
         pub.publish(data=q_sub)
     else:

@@ -46,6 +46,7 @@ import threading
 ##import ach
 from ctypes import *
 import socket
+NUM_JOINTS = 22
 
 def home():
   global sock,UDP_IP_C,UDP_PORT_C
@@ -59,8 +60,10 @@ def vel(mot,vel):
   sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
   # set velocity for mot at vel(deg/sec)
 
+sp = np.zeros(NUM_JOINTS)
 def set(mot, val):
-  global sock,UDP_PORT_C,UDP_IP_C
+  global sock,UDP_PORT_C,UDP_IP_C,state,sp
+  sp[int(mot)] = val
   # val is float to represent the joint angle in radians
   toSend = "M"+str(mot) + "A" + str(val).encode()
   sock.sendto(toSend,(UDP_IP_C, UDP_PORT_C))
@@ -163,16 +166,27 @@ def init(var=None):
   return 0
  else:
   return 1
+
+
+
 def get(mot):
-  return state[mot,pos]
+  global state, sp
+  for i in range(NUM_JOINTS):
+     state[i,pos] = state[i,ref]
+  print state[int(mot),pos]
+  #return state[int(mot),pos]
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print "#######################sp###################"
+  print sp[int(mot)]
+  return sp[int(mot)]
   #return(myActuators)
   # get current angle values of robot
-
-"""
-def close():
-  # stops the dyn packs
-
-"""
 
 
 
@@ -206,7 +220,6 @@ offset = 1
 direction = 2
 dyn_val = 3
 pos = 4
-NUM_JOINTS = 22
 state = np.zeros((NUM_JOINTS,5))
 
 def doInitVals():
@@ -247,13 +260,17 @@ def doInitVals():
   
 def setVals():
   global state
+  print "setVals"
   for i in range(NUM_JOINTS):
     rad_tmp = state[i,ref]*state[i,direction] + state[i,offset]
     state[i,dyn_val] = rad2dyn(rad_tmp)
 
 def setRef(i, val):
-  global state
-  state[i,ref] = val
+  global state, sp
+  state[int(i),ref] = val
+  sp[int(i)] = val
+  print "setRef"
+  print state[int(i),ref]
   setVals()
 
 
@@ -378,7 +395,11 @@ def main(settings):
                 print("val: ",val)
 		for actuator in myActuators:
 		    if(actuator.id == mot):
+                        print "ma good"
+                        print state[actuator.id,ref]
                         setRef(int(actuator.id),val)
+                        print "ma good 2"
+                        print state[actuator.id,ref]
 		        actuator.goal_position = int(state[actuator.id,dyn_val])
             elif(data[2] == "V"):
                 print("V - good")

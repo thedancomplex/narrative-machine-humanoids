@@ -51,7 +51,7 @@ def parse_tempo(msg):
 def sendSong(song):
     f = MidiFile(song)
     MIDI_TICKS_PER_BEAT = f.ticks_per_beat
-    pub = rospy.Publisher('musicSender', String, queue_size=10)
+    pub = rospy.Publisher('play_note', String, queue_size=10)
     rospy.init_node('robots', anonymous=True)
 
     sleep_acc = 0

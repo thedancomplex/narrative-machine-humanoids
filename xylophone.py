@@ -98,40 +98,48 @@ def playF3():
   nm.set(nm.LSR, deg2rad(32.0))
   print "F3"
 
-def playF3():
-  nm.set(nm.LSP, deg2rad(47.0))
-  nm.set(nm.LEP, deg2rad(-65.0))
+def playG3():
+  nm.set(nm.LSP, deg2rad(44.0))
+  nm.set(nm.LEP, deg2rad(-69.0))
   nm.set(nm.LSR, deg2rad(32.0))
   nm.put()
-  print "F3"
+  print "G3"
 
-def playF3():
-  nm.set(nm.LSP, deg2rad(47.0))
-  nm.set(nm.LEP, deg2rad(-65.0))
-  nm.set(nm.LSR, deg2rad(32.0))
+def playA4():
+  nm.set(nm.LSP, deg2rad(38.0))
+  nm.set(nm.LEP, deg2rad(-78.0))
+  nm.set(nm.LSR, deg2rad(28.0))
   nm.put()
-  print "F3"
+  print "A4"
 
-def playF3():
-  nm.set(nm.LSP, deg2rad(47.0))
-  nm.set(nm.LEP, deg2rad(-65.0))
-  nm.set(nm.LSR, deg2rad(32.0))
+def playB4():
+  nm.set(nm.LSP, deg2rad(26.0))
+  nm.set(nm.LEP, deg2rad(-85.0))
+  nm.set(nm.LSR, deg2rad(0.0))
   nm.put()
-  print "F3"
+  print "B4"
 
-def playF3():
-  nm.set(nm.LSP, deg2rad(47.0))
-  nm.set(nm.LEP, deg2rad(-65.0))
-  nm.set(nm.LSR, deg2rad(32.0))
+def playC3():
+  nm.set(nm.LSP, deg2rad(26.0))
+  nm.set(nm.LEP, deg2rad(-90.0))
+  nm.set(nm.LSR, deg2rad(0.0))
   nm.put()
-  print "F3"
+  print "C3"
 
-def playF3():
+playC3()
+nm.put()
+
+
+def playD3():
   nm.set(nm.LSP, deg2rad(47.0))
   nm.set(nm.LEP, deg2rad(-65.0))
   nm.set(nm.LSR, deg2rad(32.0))
   nm.put()
-  print "F3"
+  print "D3"
+
+
+
+
 
 def playC6():
   nm.set(nm.RSP, deg2rad(47.0))
@@ -155,8 +163,8 @@ def positionAdjustment():
 
 def doBeat(hand):
   if(hand == "L"):
-    da = 0.1
-    nm.set(LSP, joint[LSP] + da)
+    da = deg2rad(2.0)
+    nm.set(nm.LSP, nm.state[LSP,] + da)
     nm.put()
   elif(hand == "R"):
     da = -0.1
@@ -181,26 +189,27 @@ rospy.init_node('listener', anonymous=True)
 print "ready"
 #home()
 #nm.put()
-#playC5()
-playF3()
-nm.put()
+#playC6()
+#playG3()
+#nm.put()
 
 
 
 #positionAdjustment()
+#nm.put()
 #playPose()
 
 #zero()
 #nm.put()
-#time.sleep(3.0)
+time.sleep(3.0)
 #doBeat("L")
 #doBeat("R")
 #doBeat("B")
 rospy.spin()
 #  cur,sub,maxBeat = nm.beat()
 
-zero()
-nm.put()
+#zero()
+#nm.put()
 
 #nm.home()
 #nm.put()

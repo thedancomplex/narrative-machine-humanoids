@@ -163,8 +163,9 @@ def init(var=None):
   return 0
  else:
   return 1
-def get():
-  return(myActuators)
+def get(mot):
+  return state[mot,pos]
+  #return(myActuators)
   # get current angle values of robot
 
 """
@@ -204,8 +205,9 @@ ref = 0
 offset = 1
 direction = 2
 dyn_val = 3
+pos = 4
 NUM_JOINTS = 22
-state = np.zeros((NUM_JOINTS,4))
+state = np.zeros((NUM_JOINTS,5))
 
 def doInitVals():
   global state
@@ -404,6 +406,9 @@ def main(settings):
        elif((data[0]) == "P"):
 	    # send to robot
             net.synchronize()
+            for i in range(NUM_JOINTS):
+              state[i,pos] = state[i,ref]
+
        elif((data[0]) == "E"):
             exit()
   except:

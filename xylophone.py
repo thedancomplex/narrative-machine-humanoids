@@ -56,46 +56,87 @@ def start():
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+    hand = "L"
+    play = False
     if(data.data == "F3"):
       playF3()
+      hand = "L"
+      play = True
     elif(data.data == "G3"):
       playG3()
+      hand = "L"
+      play = True
     elif(data.data == "A3"):
       playA3()
+      hand = "L"
+      play = True
     elif(data.data == "B3"):
       playB3()
+      hand = "L"
+      play = True
     elif(data.data == "C4"):
       playC4()
+      hand = "L"
+      play = True
     elif(data.data == "D4"):
       playD4()
+      hand = "L"
+      play = True
     elif(data.data == "E4"):
       playE4()
+      hand = "L"
+      play = True
     elif(data.data == "F4"):
       playF4()
+      hand = "L"
+      play = True
     elif(data.data == "G4"):
       playG4()
+      hand = "L"
+      play = True
     elif(data.data == "A4"):
       playA4()
+      hand = "L"
+      play = True
     elif(data.data == "B4"):
       playB4()
+      hand = "L"
+      play = True
     elif(data.data == "C5"):
       playC5()
+      hand = "L"
+      play = True
     elif(data.data == "D5"):
       playD5()
+      hand = "R"
+      play = True
     elif(data.data == "E5"):
       playE5()
+      hand = "R"
+      play = True
     elif(data.data == "F5"):
       playF5()
+      hand = "R"
+      play = True
     elif(data.data == "G5"):
       playG5()
+      hand = "R"
+      play = True
     elif(data.data == "A5"):
       playA5()
+      hand = "R"
+      play = True
     elif(data.data == "B5"):
       playB5()
+      hand = "R"
+      play = True
     elif(data.data == "C6"):
       playC6()
+      hand = "R"
+      play = True
     nm.put()
-    doBeat("B")
+    if(play):
+      doBeat(hand)
     start()
 
 ############ L hand lower

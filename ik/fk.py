@@ -14,21 +14,22 @@ import sys
 # Scene Parameters
 # Change scene_plugin based on your directory structure
 scene_plugin = sys.argv[1]
-scene_name = sys.argv[2]
 
 # Create an (empty) scene graph
 sg = SceneGraph()
 
 # Load the scene plugin
-sg.load(scene_plugin, scene_name)
-
+sg.load(scene_plugin, "darwin")
+sg.load(scene_plugin, "music")
 # Initialize the scene graph
 sg.init()
 
 # Create a window, pass the scenegraph, and start
+print("creating window")
 win = SceneWin(scenegraph=sg, start=True, background=True)
 
 # Create the FK context
+print("window created")
 fk = SceneFK(sg)
 
 # Do a simple wave

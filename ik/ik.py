@@ -19,12 +19,11 @@ from std_msgs.msg import Float32MultiArray
 # Scene Parameters
 # Change scene_plugin based on your directory structure
 scene_plugin = sys.argv[1]
-scene_name = sys.argv[2]
-scene_ee = sys.argv[3]
+scene_ee = sys.argv[2]
 
-x=float(sys.argv[4])
-y=float(sys.argv[5])
-z=float(sys.argv[6])
+x=float(sys.argv[3])
+y=float(sys.argv[4])
+z=float(sys.argv[5])
 
 pub = rospy.Publisher('musicSender', Float32MultiArray, queue_size=10)
 rospy.init_node('robots', anonymous=True)
@@ -33,7 +32,8 @@ rospy.init_node('robots', anonymous=True)
 sg = SceneGraph()
 
 # Load the scene plugin
-sg.load(scene_plugin, scene_name)
+sg.load(scene_plugin, "darwin")
+sg.load(scene_plugin, "music")
 
 # Initialize the scene graph
 sg.init()

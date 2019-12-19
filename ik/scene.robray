@@ -1,6 +1,3 @@
-include "darwin-op.robray"
-
-
 def x_dist 0.24;
 def y_dist 0.03;
 def z_dist 0.03;
@@ -30,4 +27,3 @@ frame right_mallot{
 	      alpha 1;
      }
 }
-

@@ -17,8 +17,16 @@ add_custom_command(
   COMMAND aarxc "scene.robray" -o mallot-darwin.c -n "music"
   )
 
+add_custom_command(
+  OUTPUT darwin.c darwin.c.h
+  DEPENDS scene.robray
+  COMMAND aarxc "package://darwin_description/urdf/darwin.urdf" -o darwin.c -n "darwin"
+  )
+
+
+
 # Compile plugin (shared library)
-add_library( music MODULE mallot-darwin.c )
+add_library( music MODULE mallot-darwin.c darwin.c)
 target_include_directories( music PUBLIC
   ${AMINO_INCLUDE_DIRS}
   )

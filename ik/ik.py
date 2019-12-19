@@ -25,7 +25,7 @@ x=float(sys.argv[3])
 y=float(sys.argv[4])
 z=float(sys.argv[5])
 
-pub = rospy.Publisher('musicSender', Float32MultiArray, queue_size=10)
+pub = rospy.Publisher('noteAngles', Float32MultiArray, queue_size=10)
 rospy.init_node('robots', anonymous=True)
 
 # Create an (empty) scene graph
@@ -40,9 +40,6 @@ sg.init()
 
 # Create the sub-scenegraph from root to "hand"
 ssg = sg[:scene_ee]
-
-# Initialize and Start Window
-win = SceneWin(scenegraph=sg, start=True, background=True)
 
 # Create the inverse kinematics context
 ik = SceneIK(ssg)
@@ -61,26 +58,12 @@ ik.set_obj(libamino.aa_rx_ik_opt_err_trans)
 
 ik.set_tol_angle(100000)
 
-dt = .1
-period = 3
-while win.is_runnining():
-    # Solve IK
-    print("solving ik\n")
-    q_sub = ik.solve()
+# Solve IK
+print("solving ik\n")
+q_sub = ik.solve()
 
-    # Display in Window
-    if q_sub:  # check for valid solution
-        print(list(q_sub))
-        win.config = ssg.scatter_config(q_sub)
-        pub.publish(data=q_sub)
+if q_sub:  # check for valid solution
+    print(list(q_sub))
+    pub.publish(data=q_sub)
     else:
         print("No IK Solution")
-
-    # reseed for next run
-    ik.set_seed_rand()
-
-    # Sleep a bit
-    t = 0
-    while win.is_runnining() and t < period:
-        sleep(dt)
-        t += dt

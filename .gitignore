@@ -1,1 +1,8 @@
 *.pyc
+ik/CMakeCache.txt
+ik/CMakeFiles/*
+ik/cmake_install.cmake
+ik/darwin.c*
+ik/libmusic.so
+ik/Makefile
+ik/mallot-darwin.c*

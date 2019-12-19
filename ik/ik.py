@@ -22,6 +22,10 @@ scene_plugin = sys.argv[1]
 scene_name = sys.argv[2]
 scene_ee = sys.argv[3]
 
+x=float(sys.argv[4])
+y=float(sys.argv[5])
+z=float(sys.argv[6])
+
 pub = rospy.Publisher('musicSender', Float32MultiArray, queue_size=10)
 rospy.init_node('robots', anonymous=True)
 
@@ -48,7 +52,7 @@ ik.set_seed_center()
 ik.restart_time = 100e-3
 
 # Set the reference transform
-ik.ref_tf = (-0.199078, 0.678504, 0.199079, -0.678504), (-0.000000, -0.302836, 0.094977)
+ik.ref_tf = (0, 0, 0, 1), (x,y,z)
 
 # Set the objective function
 ik.set_obj(libamino.aa_rx_ik_opt_err_trans)

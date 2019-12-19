@@ -44,7 +44,7 @@ def parse_tempo(msg):
 def process_message(msg, pub):
     dict_msg = msg.dict()
     print(dict_msg)
-    if 'type' not in dict_msg:
+    if 'time' not in dict_msg:
         return 0
 
     if dict_msg['type'] == 'note_on':
